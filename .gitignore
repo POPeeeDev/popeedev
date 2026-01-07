@@ -1,1 +1,8 @@
-.github/
+# Metamath build artifacts
+.metamath/
+*.log
+
+# Temp files
+*~
+*.swp
+*.bak
