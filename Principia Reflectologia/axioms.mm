@@ -1,6 +1,6 @@
 $( ====================================================================== $)
 $( Reflectology Axioms in Metamath - Corrected Syntax                    $)
-$( Based on ring9/docs/docs/limits.tex - The 40 Axioms                   $)
+$( Based on The 40 Axioms of Reflectology                  $)
 $( ====================================================================== $)
 
 $( 
