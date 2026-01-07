@@ -189,7 +189,7 @@ Check the status badge in README.md:
 ```bash
 # Install dependencies
 sudo apt-get update
-sudo apt-get install -y gcc make autoconf automake
+sudo apt-get install -y gcc make autoconf automake git
 
 # Clean and rebuild
 rm -rf .metamath

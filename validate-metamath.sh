@@ -37,7 +37,11 @@ if [ ! -f "${METAMATH_EXE}" ]; then
     
     echo "Building metamath..."
     cd metamath-exe
-    ./build.sh > /dev/null 2>&1
+    if ! ./build.sh > /tmp/metamath-build.log 2>&1; then
+        echo -e "${RED}Failed to build Metamath. Check /tmp/metamath-build.log for details.${NC}"
+        cat /tmp/metamath-build.log
+        exit 1
+    fi
     
     # Copy executable
     cp metamath "${METAMATH_EXE}"
@@ -86,7 +90,10 @@ for FILE in "${MM_FILES[@]}"; do
     fi
     
     # Run metamath validation
-    RESULT=$(printf "read '%s'\nverify proof *\nexit\n" "$FILE" | "${METAMATH_EXE}" 2>&1)
+    MM_COMMANDS="read '${FILE}'
+verify proof *
+exit"
+    RESULT=$(echo "$MM_COMMANDS" | "${METAMATH_EXE}" 2>&1)
     
     # Check for errors
     if echo "$RESULT" | grep -q "?Error"; then
@@ -116,7 +123,9 @@ for FILE in "${MM_FILES[@]}"; do
     fi
     
     # Show stats
-    echo "$RESULT" | grep "The source has"
+    if echo "$RESULT" | grep -q "The source has"; then
+        echo "$RESULT" | grep "The source has"
+    fi
     
     echo ""
 done
