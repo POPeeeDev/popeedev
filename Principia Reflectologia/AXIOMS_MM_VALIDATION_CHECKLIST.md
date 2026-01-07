@@ -227,7 +227,7 @@
 | All variables typed via `$f` | ✅ 22 type assignments | ✅ Pass |
 | All constants typed via `$a` | ✅ 40 axiom assignments | ✅ Pass |
 | Axioms use only declared operators | ✅ All axioms verified | ✅ Pass |
-| Proper axiom syntax: `$a |- [wff] $.` | ✅ All 40 axioms | ✅ Pass |
+| Proper axiom syntax: `$a` |✅ [wff] | ✅ All 40 axioms | ✅ Pass |
 | Proper inference rule syntax | ✅ mp, gen rules | ✅ Pass |
 | Proper theorem syntax | ✅ All theorems | ✅ Pass |
 
