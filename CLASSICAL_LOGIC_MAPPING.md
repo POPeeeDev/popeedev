@@ -642,16 +642,19 @@ formal proofs of derivability remain as future work for most axioms.
 
 ### 5.2 Diff File: Initial vs. Corrected Claims
 
+**Note**: This diff compares the initial README.md claims (from commit cf7bbfd) with the corrected understanding documented here. Line numbers reference the original README.md file structure.
+
 ```diff
---- a/README.md (Initial commit cf7bbfd)
+--- a/README.md (Initial commit cf7bbfd, lines 128-141)
 +++ b/README.md (Corrected understanding)
-@@ -128,15 +128,25 @@
  
 -### ZFC Derivation
 +### ZFC Relationship with Reflectology
  
--The file `rzfc.mm` demonstrates that all 10 axioms of Zermelo-Fraenkel set theory with Choice can be derived from the Reflectology axioms:
-+The file `rzfc.mm` explores the relationship between the 40 Reflectology axioms and the 10 axioms of Zermelo-Fraenkel set theory with Choice:
+-The file `rzfc.mm` demonstrates that all 10 axioms of Zermelo-Fraenkel 
+-set theory with Choice can be derived from the Reflectology axioms:
++The file `rzfc.mm` explores the relationship between the 40 Reflectology 
++axioms and the 10 axioms of Zermelo-Fraenkel set theory with Choice:
  
 -1. Extensionality ← ax-rf10 (Omega-Bijection)
 -2. Empty Set ← ax-rf1 (Initial Emptiness)
@@ -672,7 +675,9 @@ formal proofs of derivability remain as future work for most axioms.
 +6. Infinity ← ax-rf15 (Reflective Convergence) - **Declared, proof planned**
 +7. Separation ← ax-rf8 (Symmetry Breaking) - **Declared, proof planned**
 +8. Replacement ← ax-rf39 (Internal Emergence) - **Declared, proof planned**
++   Note: Initial README incorrectly stated ax-rf32; rzfc.mm correctly uses ax-rf39
 +9. Foundation ← ax-rf25 (Gradient Dynamics) - **⚠️ Simplified proof** (rzfc-found)
++   Note: Initial README stated ax-rf19; rzfc.mm correctly uses ax-rf25
 +10. Choice ← ax-rf14 (Canonical Selection) - **Declared, proof planned**
 +
 +**Current Achievement**: The file provides:
