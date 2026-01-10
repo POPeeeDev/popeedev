@@ -4,10 +4,17 @@ This repository contains formal Metamath proofs for the Reflectology axiom syste
 
 ## Repository Structure
 
+### Core Metamath Files
 - **axioms.mm** - The 40 axioms of Reflectology formally stated in Metamath
 - **rzfc.mm** - Proofs showing that ZFC set theory can be derived from Reflectology axioms
 - **omega.mm** - Extension of set.mm with Reflectology axioms (requires external set.mm)
+
+### Documentation
+- **[CLASSICAL_LOGIC_MAPPING.md](CLASSICAL_LOGIC_MAPPING.md)** - 📖 **NEW**: Comprehensive analysis showing how each .mm file maps to classical logic, validation roadmap, and honest assessment of proof status
 - **AXIOMS_MM_VALIDATION_CHECKLIST.md** - Detailed validation checklist and status report
+- **METAMATH_COMPLIANCE.md** - Standards compliance documentation
+- **IMPLEMENTATION_SUMMARY.md** - Implementation details and achievements
+- **QUICKSTART.md** - Quick start guide for contributors
 
 ## Validation Status
 
@@ -125,20 +132,32 @@ The axioms are organized into five categories following the Reflectology framewo
 4. **Evaluate Options (Axioms 15-24)**: Convergence and goodness criteria
 5. **Optimize Decision-Making (Axioms 25-40)**: Dynamical systems and optimization
 
-### ZFC Derivation
+### ZFC Relationship with Reflectology
 
-The file `rzfc.mm` demonstrates that all 10 axioms of Zermelo-Fraenkel set theory with Choice can be derived from the Reflectology axioms:
+The file `rzfc.mm` explores the relationship between the 40 Reflectology axioms and the 10 axioms of Zermelo-Fraenkel set theory with Choice. The file provides:
 
-1. Extensionality ← ax-rf10 (Omega-Bijection)
-2. Empty Set ← ax-rf1 (Initial Emptiness)
-3. Pairing ← ax-rf3 (Recursive Encapsulation)
-4. Union ← ax-rf5 (Hierarchical Structuring)
-5. Power Set ← ax-rf6 (Redundancy Reduction)
-6. Infinity ← ax-rf15 (Reflective Convergence)
-7. Separation ← ax-rf8 (Symmetry Breaking)
-8. Replacement ← ax-rf32 (Path Dependence)
-9. Foundation ← ax-rf19 (Hyperreal Extension)
-10. Choice ← ax-rf14 (Canonical Selection)
+- ✅ Formal statements of all 10 ZFC axioms in Metamath syntax
+- ✅ Detailed informal derivation strategies for each axiom
+- ✅ Formal proofs for 2 axioms (Empty Set and a simplified Foundation)
+- 📋 Roadmap for completing formal derivations of remaining 8 axioms
+
+**Derivation Status**:
+1. Extensionality ← ax-rf10 (Omega-Bijection) - 📋 Proof planned
+2. Empty Set ← ax-rf1 (Initial Emptiness) - ✅ **PROVEN**
+3. Pairing ← ax-rf2, ax-rf3 (Structure, Encapsulation) - 📋 Proof planned
+4. Union ← ax-rf5 (Hierarchical Structuring) - 📋 Proof planned
+5. Power Set ← ax-rf6 (Redundancy Reduction) - 📋 Proof planned
+6. Infinity ← ax-rf15 (Reflective Convergence) - 📋 Proof planned
+7. Separation ← ax-rf8 (Symmetry Breaking) - 📋 Proof planned
+8. Replacement ← ax-rf39 (Internal Emergence) - 📋 Proof planned
+9. Foundation ← ax-rf25 (Gradient Dynamics) - ⚠️ Simplified proof
+10. Choice ← ax-rf14 (Canonical Selection) - 📋 Proof planned
+
+For detailed analysis, see **[CLASSICAL_LOGIC_MAPPING.md](CLASSICAL_LOGIC_MAPPING.md)** which provides:
+- Complete mapping of each .mm file to classical propositional and first-order logic
+- Comparison with the `tauto` tactic from [GinoGiotto/mm1_tactics](https://github.com/GinoGiotto/mm1_tactics/tree/main/tauto)
+- Comprehensive validation and benchmarking roadmap
+- Honest assessment of current proof status vs. aspirational claims
 
 ## License
 
