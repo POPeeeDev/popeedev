@@ -1,0 +1,67 @@
+// ============================================================================
+// Reflectology DSL - I/O and Monadic Operations
+// ============================================================================
+
+// Example 1: Simple I/O operations (state monad approach)
+io readFile = read("filename")
+
+io writeFile = write("filename", "content")
+
+// Example 2: Monad bind (chaining I/O operations)
+io processFile = bind(read("input.txt"), lambda content . 
+                   write("output.txt", content + "\nProcessed"))
+
+// Example 3: Return pure value to I/O context
+io pureValue = return(42)
+
+// Example 4: Error handling
+io safeRead = catch(read("file.txt"), lambda err . return("default content"))
+
+// Example 5: Do-notation sugar (Haskell-inspired)
+io pipeline = do {
+  content <- read("input.txt");
+  processed <- return(content + " [processed]");
+  write("output.txt", processed);
+  return(processed)
+}
+
+// Example 6: More complex do-block
+io fileProcessor = do {
+  input1 <- read("file1.txt");
+  input2 <- read("file2.txt");
+  combined <- return(input1 + input2);
+  write("combined.txt", combined);
+  return("Success")
+}
+
+// Example 7: Conditional I/O
+io conditionalWrite = do {
+  value <- read("config.txt");
+  (value > 0) => write("positive.txt", value) | return(0);
+  return(value)
+}
+
+// Example 8: Error propagation
+io chainedReads = do {
+  first <- read("first.txt");
+  second <- catch(read("second.txt"), lambda err . return(""));
+  third <- read("third.txt");
+  return(first + second + third)
+}
+
+// Example 9: Nested bind operations
+io nested = bind(
+  read("input.txt"),
+  lambda content . bind(
+    write("output.txt", content),
+    lambda _ . return("done")
+  )
+)
+
+// Example 10: State transformation
+io stateUpdate = do {
+  current <- read("state");
+  updated <- return(current + 1);
+  write("state", updated);
+  return(updated)
+}

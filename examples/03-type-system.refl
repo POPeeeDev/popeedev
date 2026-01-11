@@ -1,0 +1,86 @@
+// ============================================================================
+// Reflectology DSL - Type System Examples
+// ============================================================================
+
+// Example 1: Basic type definitions as sets
+type Natural = set({n | n in 0. or exists m in Natural : n = succ(m)})
+
+type Integer = union(Natural, set({n | exists m in Natural : n = -m}))
+
+// Example 2: Product types (tuples)
+type Pair = product(Natural, Natural)
+
+type Triple = product(Natural, Natural, Natural)
+
+// Example 3: Function types
+type UnaryOp = Natural -> Natural
+
+type BinaryOp = Natural -> (Natural -> Natural)
+
+// Example 4: Power set (set of all subsets)
+type PowerNat = power(Natural)
+
+// Example 5: Set comprehension types
+type Even = set({n in Natural | exists k in Natural : n = 2 * k})
+
+type Positive = set({n in Integer | n > 0})
+
+// Example 6: Union types (sum types)
+type Maybe = union(set({nothing}), set({just(x) | x in Natural}))
+
+type Either = union(
+  set({left(x) | x in Integer}),
+  set({right(y) | y in Natural})
+)
+
+// Example 7: Intersection types
+type PositiveEven = Even & Positive
+
+// Example 8: Record types
+record Vector2D {
+  field x : Integer
+  field y : Integer
+}
+
+record Vector3D {
+  field x : Integer
+  field y : Integer
+  field z : Integer
+}
+
+// Example 9: Function type with complex domain/codomain
+type Transformer = Vector2D -> Vector2D
+
+type Mapper = (Natural -> Natural) -> (Natural -> Natural)
+
+// Example 10: Nested function types (higher-order)
+type HOF = (Natural -> Natural) -> Natural
+
+// Example 11: Parameterized set type
+type List = set({
+  nil | cons(head, tail) | 
+  head in Natural and tail in List
+})
+
+// Example 12: Dependent-ish types (via set comprehension)
+type BoundedNat = set({n in Natural | n <= 100})
+
+type NonZeroNat = set({n in Natural | n != 0})
+
+// Example 13: Type aliases with constraints
+type Index = set({i in Natural | i >= 0 and i < 100})
+
+// Example 14: Function with constrained types
+function safeDiv(a: Natural, b: NonZeroNat) : Natural = a / b
+
+// Example 15: Polymorphic-ish function via set comprehension
+function mapList(f: Natural -> Natural, xs: List) : List =
+  xs = nil => nil |
+  xs = cons(h, t) => cons(f(h), mapList(f, t))
+
+// Example 16: Type with complex predicate
+type Prime = set({p in Natural | 
+  p > 1 and 
+  forall n in Natural : 
+    (n > 1 and n < p) => not(exists k in Natural : p = n * k)
+})

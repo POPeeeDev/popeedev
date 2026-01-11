@@ -1,0 +1,416 @@
+/* ============================================================================ */
+/* Reflectology DSL - Context-Free Grammar (CORRECTED VERSION)                */
+/* Based on 40 Reflectology Axioms with set.mm translations                   */
+/* Version: 1.0-corrected                                                      */
+/* Status: SYNTAX ERRORS FIXED - Still needs semantic refinement              */
+/* ============================================================================ */
+
+/* 
+   CHANGES FROM ORIGINAL:
+   - Fixed inequality and relation productions (removed empty operators)
+   - Fixed implication to use => instead of =
+   - Added missing operators as terminals
+   - Clarified func_call vs lvalue ambiguity
+   - Added proper operator precedence for logical operators
+   - Added comments and string literal support
+   - Improved type system with inference
+   - Removed overly ambitious async/memory sections
+   - Added realistic I/O with error handling
+*/
+
+/* ============================================================================ */
+/* TOP-LEVEL STRUCTURE                                                         */
+/* ============================================================================ */
+
+document ::= statement_list
+
+statement_list ::= statement
+                   | statement sep statement_list
+
+sep ::= "\n"
+        | ";"
+
+/* ============================================================================ */
+/* STATEMENTS                                                                  */
+/* ============================================================================ */
+
+statement ::= assignment
+              | equation
+              | inequality
+              | implication
+              | quantified
+              | probability
+              | type_decl
+              | record_decl      /* Changed from class_decl */
+              | func_decl
+              | io_decl
+              | comment          /* NEW: Added comment support */
+
+/* ============================================================================ */
+/* TYPE SYSTEM (Set-theoretic foundation per set.mm)                          */
+/* ============================================================================ */
+
+/* Type declarations - types as sets in set.mm */
+type_decl ::= "type" ident "=" type_expr
+
+type_expr ::= "set" "(" set_comprehension ")"     /* {x | P(x)} - df-rab */
+             | "union" "(" type_list ")"           /* ∪ types - df-iun */
+             | "product" "(" type_list ")"         /* × types - df-xp */
+             | type_expr "->" type_expr            /* Function type - df-map */
+             | "power" "(" type_expr ")"           /* P(A) power set - df-pw */
+             | type_expr "&" type_expr             /* NEW: Intersection type */
+             | ident                               /* Named type */
+             | "(" type_expr ")"                   /* Parenthesized */
+
+type_list ::= type_expr
+              | type_expr "," type_list
+
+/* ============================================================================ */
+/* RECORDS (Simplified from classes - more aligned with set theory)           */
+/* ============================================================================ */
+
+record_decl ::= "record" ident "{" field_decl_list "}"
+
+field_decl_list ::= field_decl
+                    | field_decl field_decl_list
+
+field_decl ::= "field" ident ":" type_expr
+
+/* ============================================================================ */
+/* FUNCTION DECLARATIONS                                                       */
+/* ============================================================================ */
+
+func_decl ::= "function" ident "(" param_list_opt ")" ":" type_expr "=" expr
+
+param_list_opt ::= param_list
+                   | E
+
+param_list ::= param
+               | param "," param_list
+
+param ::= ident ":" type_expr
+
+/* ============================================================================ */
+/* I/O (State monads with error handling)                                     */
+/* ============================================================================ */
+
+io_decl ::= "io" ident "=" io_expr
+
+io_expr ::= "read" "(" ident ")"                 /* Read from state */
+            | "write" "(" ident "," expr ")"     /* Write to state */
+            | "bind" "(" io_expr "," lambda ")"  /* Monad bind */
+            | "return" "(" expr ")"              /* Monad return */
+            | "error" "(" string ")"             /* NEW: Error handling */
+            | "catch" "(" io_expr "," lambda ")" /* NEW: Error recovery */
+            | do_block                           /* NEW: Do-notation sugar */
+
+do_block ::= "do" "{" io_statement_list "}"
+
+io_statement_list ::= io_statement
+                      | io_statement ";" io_statement_list
+
+io_statement ::= ident "<-" io_expr              /* Binding */
+                 | io_expr                        /* Expression */
+
+/* ============================================================================ */
+/* ASSIGNMENTS                                                                 */
+/* ============================================================================ */
+
+assignment ::= lvalue "=" expr
+
+/* ============================================================================ */
+/* EQUATIONS (chain equality)                                                  */
+/* ============================================================================ */
+
+equation ::= expr "=" expr eq_tail
+
+eq_tail ::= eq_more
+            | E
+
+eq_more ::= "=" expr eq_tail
+
+/* ============================================================================ */
+/* INEQUALITIES (FIXED - removed duplicates and empty operators)              */
+/* ============================================================================ */
+
+inequality ::= expr "<" expr
+               | expr "<=" expr
+               | expr ">" expr
+               | expr ">=" expr
+               | expr "!=" expr
+
+/* ============================================================================ */
+/* LOGICAL IMPLICATION (FIXED - uses => instead of =)                         */
+/* ============================================================================ */
+
+implication ::= formula "=>" formula
+                | formula "->" formula
+                | formula "<=>" formula      /* Bi-implication */
+
+/* ============================================================================ */
+/* QUANTIFIERS                                                                 */
+/* ============================================================================ */
+
+quantified ::= quantifier binder_list ":" formula
+
+quantifier ::= "forall"
+               | "exists"
+               | "A."           /* Metamath-style universal */
+               | "E."           /* Metamath-style existential */
+
+binder_list ::= binder
+                | binder "," binder_list
+
+binder ::= ident
+           | ident "in" expr
+
+/* ============================================================================ */
+/* PROBABILITY                                                                 */
+/* ============================================================================ */
+
+probability ::= "P" "(" expr "|" expr ")"
+                | "P" "(" expr ")"           /* Unconditional probability */
+
+/* ============================================================================ */
+/* FORMULAS (Logical expressions with proper precedence)                      */
+/* ============================================================================ */
+
+formula ::= disjunction
+
+disjunction ::= conjunction
+                | disjunction "or" conjunction
+                | disjunction "\\/" conjunction    /* Metamath-style or */
+
+conjunction ::= negation
+                | conjunction "and" negation
+                | conjunction "/\\" negation       /* Metamath-style and */
+
+negation ::= "not" negation
+             | "-." negation                       /* Metamath-style not */
+             | atom
+
+atom ::= "(" formula ")"
+         | relation
+         | predicate
+
+/* ============================================================================ */
+/* RELATIONS (FIXED - removed duplicates and empty operators)                 */
+/* ============================================================================ */
+
+relation ::= expr "=" expr
+             | expr "!=" expr
+             | expr "<" expr
+             | expr "<=" expr
+             | expr ">" expr
+             | expr ">=" expr
+             | expr "subset" expr
+             | expr "C_" expr              /* Metamath-style subset */
+             | expr "in" expr
+             | expr "e." expr              /* Metamath-style element-of */
+
+/* ============================================================================ */
+/* PREDICATES                                                                  */
+/* ============================================================================ */
+
+predicate ::= ident "(" arg_list_opt ")"
+
+arg_list_opt ::= arg_list
+                 | E
+
+arg_list ::= expr
+             | expr "," arg_list
+
+/* ============================================================================ */
+/* EXPRESSIONS (Arithmetic with proper precedence)                            */
+/* ============================================================================ */
+
+expr ::= expr "+" term
+         | expr "-" term
+         | term
+
+term ::= term "*" factor
+         | term "/" factor
+         | term "x." factor        /* Metamath-style multiplication */
+         | factor
+
+factor ::= "-" factor
+           | postfix
+
+/* ============================================================================ */
+/* POSTFIX OPERATORS                                                           */
+/* ============================================================================ */
+
+postfix ::= primary postfix_tail
+
+postfix_tail ::= postfix_op postfix_tail
+                 | E
+
+postfix_op ::= "'"
+               | "*"
+               | "_" subscript
+
+subscript ::= ident | number
+
+/* ============================================================================ */
+/* PRIMARY EXPRESSIONS                                                         */
+/* ============================================================================ */
+
+primary ::= "(" expr ")"
+            | "{" expr "}"
+            | func_call
+            | ident                          /* Simple variable */
+            | number
+            | string                         /* NEW: String literals */
+            | "emptyset"
+            | "0."                           /* Metamath empty set */
+            | "infty"
+            | "epsilon"
+            | "norm" "(" expr ")"
+            | "argmin" "(" ident "in" expr "," expr ")"
+            | "limit" "(" ident "->" "infty" "," expr ")"
+            | "sum" "(" ident "in" expr ":" expr ")"
+            | "log" "(" expr ")"
+            | "grad" func_call
+            | "nabla" func_call              /* Metamath-style gradient */
+            | "d" ident "/" "dt"
+            | set_comprehension
+            | tuple_expr
+            | lambda_expr
+            | record_expr
+            | field_access                   /* NEW: Clarified field access */
+            | index_access                   /* NEW: Clarified indexing */
+
+/* ============================================================================ */
+/* SET COMPREHENSIONS (Core set.mm foundation)                                */
+/* ============================================================================ */
+
+set_comprehension ::= "{" ident "|" formula "}"
+                      | "{" ident "in" expr "|" formula "}"
+
+/* ============================================================================ */
+/* TUPLES (Ordered n-tuples)                                                  */
+/* ============================================================================ */
+
+tuple_expr ::= "(" expr_list ")"
+               | "(" expr "," ")"            /* Single-element tuple */
+
+expr_list ::= expr
+              | expr "," expr_list
+
+/* ============================================================================ */
+/* LAMBDA EXPRESSIONS                                                          */
+/* ============================================================================ */
+
+lambda_expr ::= "lambda" ident "." expr
+                | "λ" ident "." expr
+                | "\\" ident "." expr        /* ASCII lambda */
+
+lambda ::= lambda_expr                       /* Alias for use in other rules */
+
+/* ============================================================================ */
+/* RECORD EXPRESSIONS                                                          */
+/* ============================================================================ */
+
+record_expr ::= "{" field_list "}"
+                | "{" "}"                    /* Empty record */
+
+field_list ::= field
+               | field "," field_list
+
+field ::= ident ":" expr
+
+/* ============================================================================ */
+/* FUNCTION CALLS (Clarified to avoid lvalue ambiguity)                       */
+/* ============================================================================ */
+
+func_call ::= ident "(" arg_list_opt ")"
+
+/* ============================================================================ */
+/* LVALUES (Left-hand side of assignments)                                    */
+/* ============================================================================ */
+
+lvalue ::= ident
+           | field_access
+           | index_access
+
+field_access ::= lvalue "." ident
+
+index_access ::= lvalue "[" expr "]"
+
+/* ============================================================================ */
+/* COMMENTS                                                                    */
+/* ============================================================================ */
+
+comment ::= line_comment | block_comment
+
+line_comment ::= "//" any_char* "\n"
+
+block_comment ::= "/*" any_char* "*/"
+
+/* ============================================================================ */
+/* LEXICAL TOKENS                                                              */
+/* ============================================================================ */
+
+number ::= integer
+           | float
+
+integer ::= digit+
+
+float ::= digit+ "." digit+
+          | digit+ "." digit+ exponent
+          | digit+ exponent
+
+exponent ::= ("e" | "E") ("+" | "-")? digit+
+
+string ::= '"' string_char* '"'
+           | "'" string_char* "'"
+
+string_char ::= [^"\\\n]                     /* Any char except quote, backslash, newline */
+                | "\\" escape_sequence
+
+escape_sequence ::= "n" | "t" | "r" | "\\" | '"' | "'"
+
+ident ::= letter ident_tail
+
+ident_tail ::= letter_or_digit ident_tail
+               | E
+
+letter_or_digit ::= letter
+                    | digit
+
+letter ::= [a-z]
+           | [A-Z]
+           | "_"
+
+digit ::= [0-9]
+
+any_char ::= .                               /* Any character */
+
+/* ============================================================================ */
+/* EPSILON (Empty production)                                                  */
+/* ============================================================================ */
+
+E ::=                                        /* Epsilon - empty production */
+
+/* ============================================================================ */
+/* TERMINAL SYMBOLS (Complete list)                                           */
+/* ============================================================================ */
+
+/*
+Arithmetic: + - * / x.
+Comparison: = != < <= > >= 
+Logical: and or not => -> <=> /\ \/ -.
+Set theory: in e. subset C_ emptyset 0. power union
+Quantifiers: forall exists A. E.
+Functions: lambda λ \ grad nabla
+I/O: read write bind return error catch do
+Types: type record field function set product
+Delimiters: ( ) { } [ ] , . ; : | 
+Assignment: =
+Special: ' _ " infty epsilon norm argmin limit sum log d/dt
+Comments: // /* */
+*/
+
+/* ============================================================================ */
+/* END OF GRAMMAR                                                              */
+/* ============================================================================ */

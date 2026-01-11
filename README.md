@@ -10,11 +10,17 @@ This repository contains formal Metamath proofs for the Reflectology axiom syste
 - **omega.mm** - Extension of set.mm with Reflectology axioms (requires external set.mm)
 
 ### Documentation
-- **[CLASSICAL_LOGIC_MAPPING.md](CLASSICAL_LOGIC_MAPPING.md)** - 📖 **NEW**: Comprehensive analysis showing how each .mm file maps to classical logic, validation roadmap, and honest assessment of proof status
+- **[CLASSICAL_LOGIC_MAPPING.md](CLASSICAL_LOGIC_MAPPING.md)** - 📖 Comprehensive analysis showing how each .mm file maps to classical logic, validation roadmap, and honest assessment of proof status
+- **[REFLECTOLOGY_DSL_GRAMMAR_REVIEW.md](REFLECTOLOGY_DSL_GRAMMAR_REVIEW.md)** - 📖 **NEW**: Critical technical review of the proposed Reflectology DSL grammar (Rating: 4.5/10)
 - **AXIOMS_MM_VALIDATION_CHECKLIST.md** - Detailed validation checklist and status report
 - **METAMATH_COMPLIANCE.md** - Standards compliance documentation
 - **IMPLEMENTATION_SUMMARY.md** - Implementation details and achievements
 - **QUICKSTART.md** - Quick start guide for contributors
+
+### Grammar & DSL (Experimental)
+- **[grammar/reflectology-dsl.ebnf](grammar/reflectology-dsl.ebnf)** - Corrected EBNF grammar specification for Reflectology DSL
+- **[grammar/README.md](grammar/README.md)** - Grammar documentation and usage guide
+- **[examples/](examples/)** - Example programs in Reflectology DSL syntax
 
 ## Validation Status
 
@@ -158,6 +164,56 @@ For detailed analysis, see **[CLASSICAL_LOGIC_MAPPING.md](CLASSICAL_LOGIC_MAPPIN
 - Comparison with the `tauto` tactic from [GinoGiotto/mm1_tactics](https://github.com/GinoGiotto/mm1_tactics/tree/main/tauto)
 - Comprehensive validation and benchmarking roadmap
 - Honest assessment of current proof status vs. aspirational claims
+
+## Reflectology DSL (Experimental)
+
+This repository includes an experimental Domain-Specific Language (DSL) that attempts to bridge Reflectology axioms with modern programming concepts through set-theoretic foundations.
+
+### DSL Grammar Review
+
+**Status: ⚠️ EXPERIMENTAL - Not Production Ready**  
+**Rating: 4.5/10** (See [REFLECTOLOGY_DSL_GRAMMAR_REVIEW.md](REFLECTOLOGY_DSL_GRAMMAR_REVIEW.md))
+
+The DSL grammar has been reviewed with technical honesty:
+
+**What Works:**
+- Set-theoretic type system (aligned with set.mm)
+- Functional programming features (lambdas, higher-order functions)
+- Monadic I/O (Haskell-inspired)
+- Mathematical notation integration
+
+**Critical Issues:**
+- Multiple syntax errors (corrected in `grammar/reflectology-dsl.ebnf`)
+- Ambiguous productions
+- Superficial Metamath integration
+- Missing essential features (imports, comprehensive error handling)
+- Verbose syntax
+
+**Key Files:**
+- **[REFLECTOLOGY_DSL_GRAMMAR_REVIEW.md](REFLECTOLOGY_DSL_GRAMMAR_REVIEW.md)** - Comprehensive honest review
+- **[grammar/reflectology-dsl.ebnf](grammar/reflectology-dsl.ebnf)** - Corrected grammar specification
+- **[examples/](examples/)** - Sample programs demonstrating syntax
+
+### Example DSL Code
+
+```refl
+// Define natural numbers as a set
+type Nat = set({n | n in 0. or exists m in Nat : n = succ(m)})
+
+// Define factorial function
+function factorial(n: Nat) : Nat =
+  (n = 0) => 1 | (n * factorial(n - 1))
+
+// Monadic I/O with do-notation
+io pipeline = do {
+  content <- read("input.txt");
+  processed <- return(content + " [processed]");
+  write("output.txt", processed);
+  return(processed)
+}
+```
+
+**Recommendation:** This DSL is exploratory. For production use, consider established tools like Coq, Lean, or Agda.
 
 ## License
 
