@@ -1,4 +1,4 @@
-# Principia Reflectologia - Metamath Validation
+# The Principia Reflectologia: The Bridge to the Universe via Chaos  - Metamath Validation
 
 This repository contains formal Metamath proofs for the Reflectology axiom system and its relationship to ZFC set theory.
 
